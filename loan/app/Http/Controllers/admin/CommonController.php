@@ -113,17 +113,24 @@ class CommonController extends Controller
 		}
 		return $arr;
 	}
-	//父子级递归  生化版
-	public function parentChild($res,$pid=0)
+
+	//递归函数
+	public function parentChild($res,$pid=0,$level=0)
 	{
-	   $arr = [];  
-	   foreach($res as $k=>$v)
-	   {
-		if($v['pid'] == $pid)
-		{
-		   $arr[] = array_merge($v,parentChild($res,$v['id']));
-		}
-	   }
-	   return $arr;
+	  $arr = [];  
+	  foreach($res as $k=>$v)
+	  {
+	    if($v['pid'] == $pid)
+	    {
+	       $v['level'] = $level;
+	       $v['to_reply'] = parentChild($res,$v['id'],$level+1);
+	       if(empty($v['to_reply']))
+	       {
+		 unset($v['to_reply']);
+	       }
+		$arr[] = $v;
+	    }
+	  }
+	  return $arr;
 	}
 }
